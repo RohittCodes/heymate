@@ -1,8 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import ChatSearch from "./chat-search";
 import Link from "next/link";
-import { CreateGroup } from "./create-group";
-import { Dot } from "lucide-react";
+import { Bot, Dot } from "lucide-react";
+import ChatSearch from "./chat-search";
+import { AddMember } from "./add-member";
 
 const usersData = [
   {
@@ -13,6 +13,7 @@ const usersData = [
     status: "online",
     last_message: "Hello, how are you?",
     last_message_at: "07:00 PM",
+    isBot: false
   },
   {
     id: 2,
@@ -22,6 +23,7 @@ const usersData = [
     status: "offline",
     last_message: "Hello, how are you?",
     last_message_at: "07:00 PM",
+    isBot: false
   },
   {
     id: 3,
@@ -31,6 +33,7 @@ const usersData = [
     status: "online",
     last_message: "Hello, how are you?",
     last_message_at: "07:00 PM",
+    isBot: false
   },
   {
     id: 4,
@@ -40,6 +43,7 @@ const usersData = [
     status: "offline",
     last_message: "Hello, how are you?",
     last_message_at: "07:00 PM",
+    isBot: false
   },
   {
     id: 5,
@@ -49,6 +53,7 @@ const usersData = [
     status: "online",
     last_message: "Hello, how are you?",
     last_message_at: "07:00 PM",
+    isBot: false
   },
   {
     id: 6,
@@ -58,6 +63,7 @@ const usersData = [
     status: "offline",
     last_message: "Hello, how are you?",
     last_message_at: "07:00 PM",
+    isBot: true
   },
   {
     id: 7,
@@ -67,41 +73,15 @@ const usersData = [
     status: "online",
     last_message: "Hello, how are you?",
     last_message_at: "07:00 PM",
-  },
-  {
-    id: 8,
-    name: "Jane Doe",
-    username: "janedoe",
-    avatar_url: "",
-    status: "offline",
-    last_message: "Hello, how are you?",
-    last_message_at: "07:00 PM",
-  },
-  {
-    id: 9,
-    name: "John Doe",
-    username: "johndoe",
-    avatar_url: "",
-    status: "online",
-    last_message: "Hello, how are you?",
-    last_message_at: "07:00 PM",
-  },
-  {
-    id: 10,
-    name: "Jane Doe",
-    username: "janedoe",
-    avatar_url: "",
-    status: "offline",
-    last_message: "Hello, how are you?",
-    last_message_at: "07:00 PM",
+    isBot: true
   },
 ];
 
 const Chatbar = () => {
   return (
-    <div className="flex flex-col h-full w-72 overflow-auto border-r-[1px] border-border py-[10px] px-2 space-y-2">
+    <div className="flex flex-col h-full w-[22rem] overflow-auto border-r-[1px] border-border py-[10px] px-2 space-y-2">
       <ChatSearch />
-      <CreateGroup />
+      <AddMember />
       <div className="flex flex-col space-y-2">
         {usersData.map((user) => (
           <Link href={`/app/chat/${user.id}`} key={user.id}>
@@ -116,6 +96,9 @@ const Chatbar = () => {
               <div className="flex flex-col">
                 <span className="text-sm flex gap-0 items-center font-semibold">
                   {user.name}
+                  {user.isBot && (
+                    <Bot size={16} className="text-gray-500 ml-1" />
+                  )}
                 </span>
                 <span className="text-xs text-gray-500">
                   {user.last_message}

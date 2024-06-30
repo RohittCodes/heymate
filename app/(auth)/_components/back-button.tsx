@@ -6,7 +6,7 @@ import Link from "next/link";
 interface BackButtonProps {
     href: string;
     text: string;
-    btnType: "login" | "register";
+    btnType: "login" | "register" | "none";
 }
 
 const BackButton = (
@@ -23,7 +23,7 @@ const BackButton = (
                         className="w-full px-1"
                         variant="link"
                     >
-                        {btnType === "login" ? "Login" : "Register"}
+                        {btnType === "login" || btnType === "none" ? "Login" : "Register"}
                     </Button>
             </Link>
         </div>

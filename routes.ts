@@ -6,11 +6,14 @@
 export const publicRoutes = [
     "/",
     "/blog",
+    "/api/uploadthing",
+    "/auth/verify-email",
 ];
 
 export const authRoutes = [
     "/auth/login",
     "/auth/register",
+    "/auth/error",
 ];
 
 export const apiAuthPrefix = "/api/auth";

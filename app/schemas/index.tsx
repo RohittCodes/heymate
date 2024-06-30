@@ -28,7 +28,7 @@ export const createGroupSchema = z.object({
   description: z.string().min(3, {
     message: "Group description must be at least 3 characters long",
   }),
-  image: z.string().url({
-    message: "Please enter a valid URL",
+  imageUrl: z.string().min(1, {
+    message: "Group image is required",
   }),
 });

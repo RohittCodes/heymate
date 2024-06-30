@@ -19,8 +19,14 @@ import { FormError } from "./error";
 import { FormSuccess } from "./success";
 import { loginSchema } from "@/app/schemas/index";
 import { login } from "@/actions/login";
+import { useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
+
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+  const urlError = searchParams.get("error") === "OAuthAccountNotLinked" ? "Email already exists, please login with correct social account." : ( searchParams.get("error") === "OAuthCallbackError" ? "An error occurred while trying to login with your social account." : "" );
+
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>(""); // "Invalid email or password!
   const [success, setSuccess] = useState<string | undefined>(""); // "Email sent successfully!"
@@ -37,13 +43,10 @@ const LoginForm = () => {
     startTransition(() => {
       setError("");
       setSuccess("");
-
-      login(values).then((response) => {
-        if (response.success) {
-          setSuccess(response.success)
-        } else {
-          setError(response.error);
-        }
+  
+      login(values, callbackUrl).then((response) => {
+        setError(response?.error);
+        setSuccess(response?.success);
       });
     });
   }
@@ -97,7 +100,7 @@ const LoginForm = () => {
               )}
             />
           </div>
-          <FormError message={error} />
+          <FormError message={error || urlError} />
           <FormSuccess message={success} />
           <Button type="submit" disabled={isPending} className="w-full">
             {isPending ? "Loading..." : "Login"}

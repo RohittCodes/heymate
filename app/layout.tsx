@@ -5,7 +5,10 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
- 
+
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
+
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -15,32 +18,28 @@ export const metadata: Metadata = {
   description: "HeyMate is the best place to hangout with friends and family",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
-    <html lang="en">
-      <body className={inter.className}>
-      <NextSSRPlugin
-          /**
-           * The `extractRouterConfig` will extract **only** the route configs
-           * from the router to prevent additional information from being
-           * leaked to the client. The data passed to the client is the same
-           * as if you were to fetch `/api/uploadthing` directly.
-           */
-          routerConfig={extractRouterConfig(ourFileRouter)}
-        />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+    <SessionProvider session={session}>
+      <html lang="en">
+        <body className={inter.className}>
+          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
           >
-            { children }
+            {children}
           </ThemeProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

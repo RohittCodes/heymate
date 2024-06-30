@@ -15,7 +15,7 @@ interface CardWrapperProps {
   headerLabel: string;
   backButtonText: string;
   backButtonHref: string;
-  btnType: "login" | "register";
+  btnType: "login" | "register" | "none";
 }
 
 const CardWrapper = ({
@@ -40,7 +40,7 @@ const CardWrapper = ({
       </CardHeader>
       <CardContent>{children}</CardContent>
       <CardFooter className="flex flex-col items-center">
-        <SocialAuth />
+        {btnType!=="none" && <SocialAuth />}
         <BackButton href={backButtonHref} text={backButtonText} btnType={btnType} />
       </CardFooter>
     </Card>

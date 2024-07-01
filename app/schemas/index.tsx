@@ -32,3 +32,9 @@ export const createGroupSchema = z.object({
     message: "Group image is required",
   }),
 });
+
+export const addMemberSchema = z.object({
+  username: z.string().min(3, {
+    message: "Username must be at least 3 characters long",
+  }),
+});

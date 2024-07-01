@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { DialogHeader } from "@/components/ui/dialog";
 import {
@@ -9,9 +11,26 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
 import { Copy, RefreshCcw } from "lucide-react";
 
-const InviteModal = () => {
+interface InviteModalProps {
+  inviteCode: string;
+}
+
+const InviteModal = (
+  { inviteCode }: InviteModalProps
+) => {
+
+  const { toast } = useToast();
+  const copyLink = () => {
+    navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/app/groups/invite/${inviteCode}`);
+    toast({
+      title: "Link copied!",
+      description: "Invite link copied to clipboard",
+    })
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -31,15 +50,16 @@ const InviteModal = () => {
         <div className="flex items-center mt-2 space-x-2">
             <Input
                 className="bg-muted border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-secondary-foreground"
-                value="invite-link"
+                value={`${process.env.NEXT_PUBLIC_URL}/app/groups/invite/${inviteCode}`}
                 readOnly
             />
-            <Button size="icon">
+            <Button size="icon" variant="ghost" onClick={copyLink}>
                 <Copy className="h-4 w-4" />
             </Button>
-            <Button size="icon">
+            {/*  TODO: Add refresh link */}
+            {/* <Button size="icon" variant="ghost">
                 <RefreshCcw className="h-4 w-4" />
-            </Button>
+            </Button> */}
         </div>
       </DialogContent>
     </Dialog>

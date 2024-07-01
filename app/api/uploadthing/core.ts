@@ -41,7 +41,7 @@ export const ourFileRouter = {
   messageFile: f(["image", "video", "audio", "pdf"])
     .middleware(() => handleAuth())
     .onUploadComplete((file) => {
-      console.log(file);
+      // Do something with the file
     }),
 } satisfies FileRouter;
 

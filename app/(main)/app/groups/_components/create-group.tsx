@@ -1,5 +1,6 @@
 "use client";
 
+import { createGroup } from "@/actions/create-group";
 import { createGroupSchema } from "@/app/schemas";
 import FileUpload from "@/components/globals/file-upload";
 import { Button } from "@/components/ui/button";
@@ -44,7 +45,7 @@ export function CreateGroup() {
   // TODO: Implement onSubmit function
   const onSubmit = (values: z.infer<typeof createGroupSchema>) => {
     try{
-      console.log(values);
+      createGroup(values);
       form.reset();
       router.refresh();
       window.location.reload();

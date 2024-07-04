@@ -145,7 +145,7 @@ model Message {
   imageUrl  String?  @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  
   memberId String
   member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 

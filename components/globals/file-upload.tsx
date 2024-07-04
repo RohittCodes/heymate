@@ -1,6 +1,6 @@
 "use client";
 
-import { UploadDropzone } from "@/lib/uploadthing";
+import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 import "@uploadthing/react/styles.css";
 
 import { X } from "lucide-react";
@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 
 interface FileUploadProps {
     onChange: (url?: string) => void;        
-    value: string;
+    value: string | undefined;
     endpoint: "groupImage" | "userImage" | "messageFile";
 }
 
@@ -40,6 +40,21 @@ const FileUpload = (
             </div>
         );
     }
+
+    if(endpoint === "messageFile") {
+        return (
+            <UploadButton   
+                endpoint={endpoint}
+                onClientUploadComplete={(res) => {
+                    onChange(res?.[0]?.url);
+                }}
+                onUploadError={(error: Error) => {
+                    console.error(error);
+                }}
+            />
+        );
+    }
+
     return ( 
         <UploadDropzone
             endpoint={endpoint}

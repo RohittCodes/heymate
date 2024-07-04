@@ -1,6 +1,6 @@
 "use client";
 
-import { createGroup } from "@/actions/create-group";
+import { createGroup } from "@/actions/group";
 import { createGroupSchema } from "@/app/schemas";
 import FileUpload from "@/components/globals/file-upload";
 import { Button } from "@/components/ui/button";

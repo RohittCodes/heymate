@@ -3,8 +3,10 @@ import InviteModal from "../_components/invite-modal";
 import { Button } from "@/components/ui/button";
 import { MoreVertical } from "lucide-react";
 import { getGroupById, isMemberOfGroup } from "@/data/group";
-import { Input } from "@/components/ui/input";
 import { auth } from "@/auth";
+import SendGroupMessage from "../_components/send-message";
+import MessageView from "../_components/message-view";
+import { getMessages } from "@/actions/group";
 
 const ChatPage = async (
     {params : {group}} : {params: {group: string}}
@@ -14,6 +16,8 @@ const ChatPage = async (
     const userId = session?.user?.id as string;
 
     const isMember = await isMemberOfGroup(userId, group);
+
+    const messages = await getMessages({ id: group, type: "group" });
 
     if(!isMember) {
         return (
@@ -42,7 +46,8 @@ const ChatPage = async (
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <Input placeholder="Search messages" />
+            <MessageView type="group" id={group} messages={messages.messages} />
+            <SendGroupMessage groupId={group} />
         </div>
      );
 }

@@ -38,3 +38,12 @@ export const addMemberSchema = z.object({
     message: "Username must be at least 3 characters long",
   }),
 });
+
+export const messageSchema = z.object({
+  message: z.string().min(1, {
+    message: "Message is required",
+  }),
+  fileUrl: z.string().optional(),
+  type: z.enum(["group", "direct"]),
+  id: z.string(),
+});

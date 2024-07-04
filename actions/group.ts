@@ -112,3 +112,74 @@ export const acceptGroupInvite = async (inviteCode: string) => {
         }
     }
 }
+
+interface GetMessagesProps {
+    id: string;
+    type: "group" | "direct";
+}
+
+export const getMessages = async ({ id, type }: GetMessagesProps) => {
+    const session = await auth();
+
+    const userId = session?.user?.id as string;
+
+    try {
+        const group = await db.group.findFirst({
+            where: {
+                id
+            }
+        });
+
+        if(!group) {
+            return {
+                error: "Group not found!"
+            }
+        }
+
+        const isMember = await db.group.findFirst({
+            where: {
+                id: group.id,
+                members: {
+                    some: {
+                        userId
+                    }
+                }
+            }
+        });
+
+        if(!isMember) {
+            return {
+                error: "You are not a member of this group!"
+            }
+        }
+
+        const messages = await db.message.findMany({
+            where: {
+                groupId: id
+            },
+            include: {
+                member: {
+                    select: {
+                        user: {
+                            select: {
+                                id: true,
+                                username: true,
+                                image: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        return {
+            success: "Messages found!",
+            messages
+        }
+    } catch (error) {
+        console.error(error);
+        return {
+            error: "Failed to get messages!"
+        }
+    }
+}

@@ -1,4 +1,4 @@
-import { acceptGroupInvite } from "@/actions/create-group";
+import { acceptGroupInvite } from "@/actions/group";
 import { redirect } from "next/navigation";
 
 const InvitePage = async (

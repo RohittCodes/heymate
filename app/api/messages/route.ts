@@ -1,5 +1,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
 export async function POST (req: Request, res: Response) {
@@ -50,10 +52,26 @@ export async function POST (req: Request, res: Response) {
                     imageUrl: fileUrl,
                     groupId: id,
                     memberId: getMember?.id
+                },
+                include: {
+                    member: {
+                        include: {
+                            user: true
+                        }
+                    }
                 }
             });
+
+            console.log(id);
             
-            return new NextResponse(JSON.stringify(newMessage), { status: 201 });
+            if (!newMessage) {
+                return new NextResponse("Internal Server Error", { status: 500 });
+            }
+            
+            pusherServer.trigger(toPusherKey(`group:${id}`), "group-message", newMessage);
+            
+            // Return the new message directly
+            return new NextResponse(JSON.stringify(newMessage), { status: 201 });            
         } else if(type === "direct") {
             const user = await db.user.findUnique({
                 where: {

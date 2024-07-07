@@ -42,7 +42,6 @@ export function CreateGroup() {
     },
   });
 
-  // TODO: Implement onSubmit function
   const onSubmit = (values: z.infer<typeof createGroupSchema>) => {
     try{
       createGroup(values);

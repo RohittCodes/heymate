@@ -39,10 +39,6 @@ export const createGroup = async (values: z.infer<typeof createGroupSchema>) => 
                 }
             }
         })
-
-        console.log({
-            success: "Group created!"
-        });
     } catch (error) {
         console.error(error);
         return {

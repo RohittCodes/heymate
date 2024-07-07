@@ -61,46 +61,62 @@ export async function POST (req: Request, res: Response) {
                     }
                 }
             });
-
-            console.log(id);
             
             if (!newMessage) {
                 return new NextResponse("Internal Server Error", { status: 500 });
             }
+
+            console.log(newMessage);
             
             pusherServer.trigger(toPusherKey(`group:${id}`), "group-message", newMessage);
             
             // Return the new message directly
             return new NextResponse(JSON.stringify(newMessage), { status: 201 });            
         } else if(type === "direct") {
-            const user = await db.user.findUnique({
+            const friendship = await db.friendship.findUnique({
                 where: {
                     id
                 },
+                include: {
+                    requester: true,
+                    requestee: true
+                }
             });
-
-            if(!user?.id) {
+            
+            if(!friendship) {
                 return new NextResponse("Not Found", { status: 404 });
+            }
+
+            if(friendship.requesterId !== currentUser.id && friendship.requesteeId !== currentUser.id) {
+                return new NextResponse("Unauthorized", { status: 401 });
             }
 
             const newMessage = await db.directMessage.create({
                 data: {
                     content: message,
                     fileUrl,
-                    memberId: currentUser.id,
-                    friendshipId: id
+                    friendshipId: id,
+                    senderId: currentUser.id
+                },
+                include: {
+                    friendship: true,
+                    sender: true
                 }
             });
 
-            if(!newMessage) {
+            if (!newMessage) {
                 return new NextResponse("Internal Server Error", { status: 500 });
             }
 
+            console.log(newMessage);
+
+            pusherServer.trigger(toPusherKey(`direct:${id}`), "direct-message", newMessage);
+
+            // Return the new message directly
             return new NextResponse(JSON.stringify(newMessage), { status: 201 });
-        } else {
-            return new NextResponse("Bad Request", { status: 400 });
         }
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         return new NextResponse("Internal Server Error", { status: 500 });
     }

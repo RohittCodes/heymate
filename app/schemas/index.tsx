@@ -47,3 +47,9 @@ export const messageSchema = z.object({
   type: z.enum(["group", "direct"]),
   id: z.string(),
 });
+
+export const addFriendSchema = z.object({
+  username: z.string().min(3, {
+    message: "Username must be at least 3 characters long",
+  }),
+});

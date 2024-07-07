@@ -1,6 +1,6 @@
 "use client";
 
-import { addMemberSchema, createGroupSchema } from "@/app/schemas";
+import { addMemberSchema } from "@/app/schemas";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,9 +24,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { addMember } from "@/actions/friends";
+import { useRouter } from "next/navigation";
 
 export function AddMember() {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof addMemberSchema>>({
     resolver: zodResolver(addMemberSchema),
@@ -36,7 +39,15 @@ export function AddMember() {
   });
 
   const onSubmit = (values: z.infer<typeof addMemberSchema>) => {
-    console.log(values);
+    try{
+      addMember(values);
+      // console.log("Member added!");
+      form.reset();
+      router.refresh();
+      window.location.reload();
+    } catch (error) {
+      // console.log(error);
+    }
   };
 
   return (
@@ -46,9 +57,9 @@ export function AddMember() {
       </DialogTrigger>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Add Member</DialogTitle>
+          <DialogTitle>Add Friend</DialogTitle>
           <DialogDescription>
-            Start a new group and invite your friends to join!
+            Add a friend to your Friends list by entering their username.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -59,12 +70,12 @@ export function AddMember() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         disabled={isPending}
-                        placeholder="Group Name"
+                        placeholder="Enter a username"
                         type="text"
                         className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                       />

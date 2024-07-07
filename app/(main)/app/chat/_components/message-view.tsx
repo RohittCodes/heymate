@@ -3,18 +3,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { format } from "date-fns";
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
 
-interface MessageViewProps {
-  type: "group";
+interface DirectMessageViewProps {
   id: string;
   messages: any;
 }
 
-const MessageView = ({ type, id, messages }: MessageViewProps) => {
+const DirectMessageView = ({ id, messages }: DirectMessageViewProps) => {
 
   const [messageView, setMessageView] = useState<any>(messages);
   const user = useCurrentUser();
@@ -26,26 +24,24 @@ const MessageView = ({ type, id, messages }: MessageViewProps) => {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    pusherClient.subscribe(toPusherKey(`group:${id}`));
+    pusherClient.subscribe(toPusherKey(`direct:${id}`));
 
     const messageHandler = (message: any) => {
       // other data don't start with the name of the message, so don't include newMessage in the object name to avoid confusion
       setMessageView((prev: any) => [...prev, message]);
     }
 
-    pusherClient.bind("group-message", messageHandler);
+    pusherClient.bind("direct-message", messageHandler);
 
     return () => {
-      pusherClient.unsubscribe(toPusherKey(`group:${id}`));
-      pusherClient.unbind("group-message", messageHandler);
+      pusherClient.unsubscribe(toPusherKey(`direct:${id}`));
+      pusherClient.unbind("direct-message", messageHandler);
     };
   }, [id]);
 
   const formatTimestamp = (timestamp: string) => {
     return format(new Date(timestamp), "h:mm a");
   }
-  
-  // console.log(messageView);
 
   return (
     <div className="flex-1 h-full flex flex-col pt-4 px-4 overflow-y-auto">
@@ -53,12 +49,12 @@ const MessageView = ({ type, id, messages }: MessageViewProps) => {
         <div
           key={message.id}
           className={`flex flex-col w-full items-${
-            message.member?.user?.id === userId ? "end" : "start"
+            message.senderId === userId ? "end" : "start"
           } mb-4`}
         >
             <div
               className={`flex items-center py-2 w-full ${
-                message.member?.user?.id === userId
+                message.senderId === userId
                   ? "flex-row-reverse"
                   : "flex-row"
               }`}
@@ -68,23 +64,23 @@ const MessageView = ({ type, id, messages }: MessageViewProps) => {
               >
                 <Avatar>
                   <AvatarImage
-                    src={message.member?.user?.image}
-                    alt={message.member?.user?.username}
+                    src={message.sender.image}
+                    alt={message.sender.username}
                   />
                   <AvatarFallback>
-                    {message.member?.user?.username}
+                    {message.sender.username}
                   </AvatarFallback>
                 </Avatar>
               </div>
               <div
                 className={`flex px-4 flex-col h-full justify-between ${
-                  message.member?.user?.id === userId
+                  message.senderId === userId
                     ? "items-end"
                     : "items-start"
                 }`}
               >
                 <div className="text-xs text-gray-500">
-                  {message.member?.user?.username}
+                  {message.sender.username}
                 </div>
                 <div className={`flex items-end rounded-lg text-sm`}>
                   {message.content}
@@ -101,4 +97,4 @@ const MessageView = ({ type, id, messages }: MessageViewProps) => {
   );
 };
 
-export default MessageView;
+export default DirectMessageView;

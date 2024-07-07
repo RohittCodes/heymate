@@ -19,7 +19,7 @@ model User {
   username      String?   @unique
   email         String?   @unique
   emailVerified DateTime?
-  image         String?
+  image         String    @default("https://utfs.io/f/48fe58ce-0b67-4c7c-ba99-48a6a3fee822-k6oqyv.png")
   password      String?
   isBot         Boolean   @default(false)
 
@@ -28,6 +28,7 @@ model User {
   members             Member[]
   friendshipsSent     Friendship[] @relation("friendshipsSent")
   friendshipsReceived Friendship[] @relation("friendshipsReceived")
+  sentMessages        DirectMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -130,7 +131,6 @@ model Member {
   group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   messages       Message[]
-  directMessages DirectMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -166,8 +166,8 @@ model DirectMessage {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  memberId String
-  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   friendshipId String
   friendship   Friendship @relation(fields: [friendshipId], references: [id], onDelete: Cascade)
@@ -175,6 +175,5 @@ model DirectMessage {
   deleted   Boolean   @default(false)
   deletedAt DateTime?
 
-  @@index([memberId])
   @@index([friendshipId])
 }

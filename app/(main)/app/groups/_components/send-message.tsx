@@ -43,7 +43,7 @@ const SendGroupMessage = (
     }
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center p-4 w-full bg-transparent border-t border-border" autoComplete="off">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center px-4 pb-4 w-full bg-transparent" autoComplete="off">
             {/* <FormField
             control={form.control}
                 name="fileUrl"

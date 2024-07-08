@@ -25,16 +25,16 @@ const MessageView = ({ type, id, messages }: MessageViewProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
     pusherClient.subscribe(toPusherKey(`group:${id}`));
 
     const messageHandler = (message: any) => {
-      // other data don't start with the name of the message, so don't include newMessage in the object name to avoid confusion
       setMessageView((prev: any) => [...prev, message]);
+
+      bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
     }
 
     pusherClient.bind("group-message", messageHandler);
-
     return () => {
       pusherClient.unsubscribe(toPusherKey(`group:${id}`));
       pusherClient.unbind("group-message", messageHandler);
@@ -45,10 +45,8 @@ const MessageView = ({ type, id, messages }: MessageViewProps) => {
     return format(new Date(timestamp), "h:mm a");
   }
   
-  // console.log(messageView);
-
   return (
-    <div className="flex-1 h-full flex flex-col pt-4 px-4 overflow-y-auto">
+    <div className="flex-1 h-[calc(100%-20rem)] flex flex-col px-4 overflow-y-auto">
       {messageView.map((message: any) => (
         <div
           key={message.id}
@@ -96,7 +94,7 @@ const MessageView = ({ type, id, messages }: MessageViewProps) => {
           </div>
         </div>
       ))}
-      <div ref={bottomRef} />
+      <div ref={bottomRef} className="pt-12" />
     </div>
   );
 };

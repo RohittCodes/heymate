@@ -1,7 +1,7 @@
 "use client";
 
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { Bot, Dot } from "lucide-react";
+import { Bot, BotIcon, Dot } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -21,14 +21,19 @@ const FriendPreview = ({ content }: FriendPreviewProps) => {
   if (content.requesterId === user.id) {
     return (
       <Link href={`/app/chat/${content.id}`}>
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white">
-            <Image src={content.requestee.image} width={32} height={32} alt="Avatar" className="rounded-full" />
-            </div>
+        <div className="flex items-center space-x-2 hover:bg-muted p-2 rounded-lg cursor-pointer">
+          <Image src={content.requestee.image} width={32} height={32} alt="Avatar" className="rounded-full" />
           <div className="flex flex-col">
+            <div className="flex items-center space-x-2">
             <span className="font-semibold text-sm">
               {content.requestee.username}
             </span>
+            {
+              content.requestee.isBot && (
+                <BotIcon size={16} />
+              )
+            }
+            </div>
             {content.status === "PENDING" && (
               <span className="text-xs text-gray-500">Friend request sent</span>
             )}
@@ -56,8 +61,8 @@ const FriendPreview = ({ content }: FriendPreviewProps) => {
   } else {
     return (
       <Link href={`/app/chat/${content.id}`}>
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white">
+        <div className="flex items-center space-x-2 hover:bg-muted p-2 rounded-lg cursor-pointer">
+        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white">
             <Image src={content.requester.image} width={32} height={32} alt="Avatar" className="rounded-full" />
             </div>
           <div className="flex flex-col">

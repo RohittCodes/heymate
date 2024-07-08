@@ -22,6 +22,7 @@ model User {
   image         String    @default("https://utfs.io/f/48fe58ce-0b67-4c7c-ba99-48a6a3fee822-k6oqyv.png")
   password      String?
   isBot         Boolean   @default(false)
+  description   String?
 
   Account             Account?
   groups              Group[]

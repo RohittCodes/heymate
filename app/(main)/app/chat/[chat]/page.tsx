@@ -110,7 +110,6 @@ const ChatPage = async ({ params }: { params: { chat: string } }) => {
           </div>
         </div>
       </div>
-      {/* TODO: Implement message view and send message components */}
       <DirectMessageView id={friendship.id} messages={friendship.directMessages} />
       <SendDirectMessage friendshipId={friendship.id} />
     </div>

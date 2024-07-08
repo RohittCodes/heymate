@@ -3,6 +3,9 @@ import { db } from "@/lib/db";
 import { pusherServer } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
 import { NextResponse } from "next/server";
+import MindsDB from "mindsdb-js-sdk";
+import connect from "@/lib/create-mind";
+import { getUserByUsername } from "@/data/user";
 
 export async function POST (req: Request, res: Response) {
     try {
@@ -46,6 +49,29 @@ export async function POST (req: Request, res: Response) {
                 return new NextResponse("Unauthorized", { status: 401 });
             }
 
+            // Bots are mentioned in the group with @ symbol and their username. Grab the username and check if it's a bot
+
+            const mentionedUsers = message.match(/@(\w+)/g);
+
+            if(mentionedUsers) {
+                for(const user of mentionedUsers) {
+                    const username = user.replace("@", "");
+                    const mentionedUser = await getUserByUsername(username);
+
+                    if(!mentionedUser) {
+                        return new NextResponse("Not Found", { status: 404 });
+                    }
+
+                    if(mentionedUser.isBot){
+                        // Connect to MindsDB
+                        // Query the model
+                        // Return the prediction
+                        // Store the prediction in the database
+                        // Trigger the pusherServer to send the message to the user
+                    }
+                }
+            }
+
             const newMessage = await db.message.create({
                 data: {
                     content: message,
@@ -66,7 +92,7 @@ export async function POST (req: Request, res: Response) {
                 return new NextResponse("Internal Server Error", { status: 500 });
             }
 
-            console.log(newMessage);
+            // console.log(newMessage);
             
             pusherServer.trigger(toPusherKey(`group:${id}`), "group-message", newMessage);
             
@@ -91,6 +117,35 @@ export async function POST (req: Request, res: Response) {
                 return new NextResponse("Unauthorized", { status: 401 });
             }
 
+            if(friendship.requestee.isBot) {
+                await connect();
+
+                const model = await MindsDB.Models.getModel("minds_endpoint_model", "mindsdb");
+
+                if(!model) {
+                    return new NextResponse("Model not found", { status: 404 });
+                }
+
+                const queryOptions = {
+                    where: [`text = '${message}'`]
+                };
+
+                const response = await model.query(queryOptions);
+                const data = response.data as any;
+
+                if(!data) {
+                    return new NextResponse("No prediction found", { status: 404 });
+                }
+                
+                console.log(data);
+
+                // Return the prediction and store it in the database
+
+                // trigger the pusherServer to send the message to the user
+
+                return new NextResponse(JSON.stringify(data), { status: 200 });
+            }
+
             const newMessage = await db.directMessage.create({
                 data: {
                     content: message,
@@ -108,7 +163,7 @@ export async function POST (req: Request, res: Response) {
                 return new NextResponse("Internal Server Error", { status: 500 });
             }
 
-            console.log(newMessage);
+            // console.log(newMessage);
 
             pusherServer.trigger(toPusherKey(`direct:${id}`), "direct-message", newMessage);
 

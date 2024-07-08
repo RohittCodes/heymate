@@ -35,6 +35,32 @@ export const addMember = async (values: z.infer<typeof addFriendSchema>) => {
     
     const currentUser = session?.user as any;
 
+    if(currentUser.id === requesteeId.id) {
+        return {
+            error: "Cannot send friend request to self!"
+        }
+    }
+
+    const isRequesteeBot = requesteeId.isBot;
+
+    if(isRequesteeBot) {
+        try {
+            await db.friendship.create({
+                data: {
+                    requesterId: currentUser.id,
+                    requesteeId: requesteeId.id,
+                    status: "ACCEPTED"
+                },
+            });
+
+            return {
+                success: "Friend added!"
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     try{
         await db.friendship.create({
             data: {

@@ -23,12 +23,14 @@ const DirectMessageView = ({ id, messages }: DirectMessageViewProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
     pusherClient.subscribe(toPusherKey(`direct:${id}`));
 
     const messageHandler = (message: any) => {
       // other data don't start with the name of the message, so don't include newMessage in the object name to avoid confusion
       setMessageView((prev: any) => [...prev, message]);
+
+      bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
     }
 
     pusherClient.bind("direct-message", messageHandler);
@@ -92,7 +94,7 @@ const DirectMessageView = ({ id, messages }: DirectMessageViewProps) => {
           </div>
         </div>
       ))}
-      <div ref={bottomRef} />
+      <div ref={bottomRef} className="pt-12" />
     </div>
   );
 };

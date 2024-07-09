@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import SendGroupMessage from "../_components/send-message";
 import MessageView from "../_components/message-view";
 import { getMessages } from "@/actions/group";
+import AddBot from "../_components/add-bot";
 
 const ChatPage = async (
     {params : {group}} : {params: {group: string}}
@@ -41,8 +42,9 @@ const ChatPage = async (
                             <MoreVertical className="h-6 w-6" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent side="bottom" sideOffset={10} align="start">
+                    <DropdownMenuContent side="bottom" sideOffset={10} align="start" className="flex flex-col gap-1">
                         <InviteModal inviteCode={groupInfo.inviteCode} />
+                        <AddBot />
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

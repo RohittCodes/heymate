@@ -26,6 +26,9 @@ const DirectMessageView = ({ id, messages }: DirectMessageViewProps) => {
     bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
     pusherClient.subscribe(toPusherKey(`direct:${id}`));
 
+    // sort messages by createdAt
+    setMessageView((prev: any) => [...prev].sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+    
     const messageHandler = (message: any) => {
       // other data don't start with the name of the message, so don't include newMessage in the object name to avoid confusion
       setMessageView((prev: any) => [...prev, message]);
@@ -55,7 +58,7 @@ const DirectMessageView = ({ id, messages }: DirectMessageViewProps) => {
           } mb-4`}
         >
             <div
-              className={`flex items-center py-2 w-full ${
+              className={`flex items-center py-2 w-[70%] ${
                 message.senderId === userId
                   ? "flex-row-reverse"
                   : "flex-row"

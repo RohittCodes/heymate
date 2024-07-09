@@ -34,7 +34,7 @@ const InviteModal = (
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button variant="ghost" className="w-full">
           Invite Friends
         </Button>
       </DialogTrigger>

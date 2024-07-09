@@ -39,6 +39,15 @@ export const addMemberSchema = z.object({
   }),
 });
 
+export const addBotSchema = z.object({
+  userId: z.string().min(1, {
+    message: "User ID is required",
+  }),
+  groupId: z.string().min(1, {
+    message: "Group ID is required",
+  }),
+});
+
 export const messageSchema = z.object({
   message: z.string().min(1, {
     message: "Message is required",

@@ -23,7 +23,7 @@ interface CarouselSizeProps {
   friends: any
 }
 
-export const CarouselSize = ({ bots, friends }: CarouselSizeProps) => {
+export const DirectBots = ({ bots, friends }: CarouselSizeProps) => {
   
   const [isPending, startTransition] = useTransition();
   const router = useRouter();

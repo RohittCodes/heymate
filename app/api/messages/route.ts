@@ -28,6 +28,9 @@ export async function POST (req: Request, res: Response) {
         if(!message && !fileUrl) {
             return new NextResponse("Bad Request", { status: 400 });
         }
+
+        // use escape sequences for the message, prevent ' from breaking the query
+        const escapedMessage = message.replace(/'/g, "\\'");
         
         if(type === "group") {
             const group = await db.group.findUnique({
@@ -51,10 +54,10 @@ export async function POST (req: Request, res: Response) {
 
             // Bots are mentioned in the group with @ symbol and their username. Grab the username and check if it's a bot
 
-            const mentionedUsers = message.match(/@(\w+)/g);
+            const mentionedUser = message.match(/@(\w+)/g);
 
-            if(mentionedUsers) {
-                for(const user of mentionedUsers) {
+            if(mentionedUser) {
+                for(const user of mentionedUser) {
                     const username = user.replace("@", "");
                     const mentionedUser = await getUserByUsername(username);
 
@@ -62,12 +65,84 @@ export async function POST (req: Request, res: Response) {
                         return new NextResponse("Not Found", { status: 404 });
                     }
 
+                    // console.log(mentionedUser);
+                    
+                    const getBotId = group.members.find((member) => member.userId === mentionedUser.id);
+
+                    if(!getBotId) {
+                        return new NextResponse("Unauthorized", { status: 401 });
+                    }
+
                     if(mentionedUser.isBot){
                         // Connect to MindsDB
+                        await connect();
+
+                        // Get the model
+                        const model = await MindsDB.Models.getModel(`${mentionedUser.username}`, "mindsdb");
+
+                        if(!model) {
+                            return new NextResponse("Model not found", { status: 404 });
+                        }
+
                         // Query the model
+                        const queryOptions = {
+                            where: [`text = '${escapedMessage}'`]
+                        };
+
+                        const response = await model.query(queryOptions);
+                        const data = response.data as any;
+
+                        if(!data) {
+                            return new NextResponse("No prediction found", { status: 404 });
+                        }
+
                         // Return the prediction
-                        // Store the prediction in the database
-                        // Trigger the pusherServer to send the message to the user
+                        const newMessage = await db.message.create({
+                            data: {
+                                content: message,
+                                imageUrl: fileUrl,
+                                groupId: id,
+                                memberId: getMember?.id
+                            },
+                            include: {
+                                member: {
+                                    include: {
+                                        user: true
+                                    }
+                                }
+                            }
+                        });
+
+                        if (!newMessage) {
+                            return new NextResponse("Internal Server Error", { status: 500 });
+                        }
+
+                        await pusherServer.trigger(toPusherKey(`group:${id}`), "group-message", newMessage);
+
+                        const prediction = await db.message.create({
+                            data: {
+                                content: data.answer,
+                                groupId: id,
+                                memberId: getBotId?.id
+                            },
+                            include: {
+                                member: {
+                                    include: {
+                                        user: true
+                                    }
+                                }
+                            }
+                        });
+
+                        // console.log(data);
+
+                        if (!prediction) {
+                            return new NextResponse("Internal Server Error", { status: 500 });
+                        }
+
+                        await pusherServer.trigger(toPusherKey(`group:${id}`), "group-message", prediction);
+
+                        return new NextResponse(JSON.stringify(data), { status: 200 });
                     }
                 }
             }
@@ -94,7 +169,7 @@ export async function POST (req: Request, res: Response) {
 
             // console.log(newMessage);
             
-            pusherServer.trigger(toPusherKey(`group:${id}`), "group-message", newMessage);
+            await pusherServer.trigger(toPusherKey(`group:${id}`), "group-message", newMessage);
             
             // Return the new message directly
             return new NextResponse(JSON.stringify(newMessage), { status: 201 });            
@@ -120,14 +195,14 @@ export async function POST (req: Request, res: Response) {
             if(friendship.requestee.isBot) {
                 await connect();
 
-                const model = await MindsDB.Models.getModel("minds_endpoint_model", "mindsdb");
+                const model = await MindsDB.Models.getModel(`${friendship.requestee.username}`, "mindsdb");
 
                 if(!model) {
                     return new NextResponse("Model not found", { status: 404 });
                 }
 
                 const queryOptions = {
-                    where: [`text = '${message}'`]
+                    where: [`text = '${escapedMessage}'`]
                 };
 
                 const response = await model.query(queryOptions);
@@ -137,11 +212,45 @@ export async function POST (req: Request, res: Response) {
                     return new NextResponse("No prediction found", { status: 404 });
                 }
                 
-                console.log(data);
+                // console.log(data);
 
                 // Return the prediction and store it in the database
+                const newMessage = await db.directMessage.create({
+                    data: {
+                        content: message,
+                        fileUrl,
+                        friendshipId: id,
+                        senderId: currentUser.id,
+                    },
+                    include: {
+                        friendship: true,
+                        sender: true
+                    }
+                });
 
-                // trigger the pusherServer to send the message to the user
+                if (!newMessage) {
+                    return new NextResponse("Internal Server Error", { status: 500 });
+                }
+
+                await pusherServer.trigger(toPusherKey(`direct:${id}`), "direct-message", newMessage);
+
+                const prediction = await db.directMessage.create({
+                    data: {
+                        content: data.answer,
+                        friendshipId: id,
+                        senderId: friendship.requesteeId
+                    },
+                    include: {
+                        friendship: true,
+                        sender: true
+                    }
+                });
+
+                if (!prediction) {
+                    return new NextResponse("Internal Server Error", { status: 500 });
+                }
+
+                await pusherServer.trigger(toPusherKey(`direct:${id}`), "direct-message", prediction);
 
                 return new NextResponse(JSON.stringify(data), { status: 200 });
             }
@@ -165,7 +274,7 @@ export async function POST (req: Request, res: Response) {
 
             // console.log(newMessage);
 
-            pusherServer.trigger(toPusherKey(`direct:${id}`), "direct-message", newMessage);
+            await pusherServer.trigger(toPusherKey(`direct:${id}`), "direct-message", newMessage);
 
             // Return the new message directly
             return new NextResponse(JSON.stringify(newMessage), { status: 201 });

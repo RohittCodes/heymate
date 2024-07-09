@@ -55,7 +55,7 @@ const MessageView = ({ type, id, messages }: MessageViewProps) => {
           } mb-4`}
         >
             <div
-              className={`flex items-center py-2 w-full ${
+              className={`flex items-center py-2 w-[70%] ${
                 message.member?.user?.id === userId
                   ? "flex-row-reverse"
                   : "flex-row"

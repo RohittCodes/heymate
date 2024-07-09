@@ -1,7 +1,9 @@
 import { getAllBots } from "@/actions/bots";
-import { CarouselSize } from "./_components/carousel";
+import { DirectBots } from "./_components/carousel";
 import { getFriendsByUserId } from "@/actions/friends";
 import { auth } from "@/auth";
+import GroupBots from "./_components/group-bots";
+import { getGroupOwnedAndModerated } from "@/actions/group";
 
 const AppPage = async () => {
 
@@ -23,7 +25,16 @@ const AppPage = async () => {
         }
     }
 
-    console.log(friends)
+    const groups = await getGroupOwnedAndModerated(userId, bots);
+
+    if(!groups) {
+        return {
+            error: "No groups found!"
+        }
+    }
+
+    // console.log(groups)
+    // console.log(friends)
 
     return ( 
         <div className="flex flex-col h-full gap-4 mx-4 w-full py-4">
@@ -31,10 +42,14 @@ const AppPage = async () => {
                 Welcome to HeyMate!
             </div>
             <div className="flex flex-col gap-4">
-                <div className="text-lg font-semibold">
+                <div className="flex flex-col gap-6">
                     Bots you can use:
+                    <DirectBots bots={bots} friends={friends} />
                 </div>
-                <CarouselSize bots={bots} friends={friends} />
+                <div className="flex flex-col gap-6">
+                    Bots to add to your groups:
+                    <GroupBots bots={bots} groups={groups} />
+                </div>
             </div>
         </div>
      );

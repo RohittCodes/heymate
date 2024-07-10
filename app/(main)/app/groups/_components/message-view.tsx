@@ -3,10 +3,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { format } from "date-fns";
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
+import Sentiment from "../../_components/sentiment";
 
 interface MessageViewProps {
   type: "group";
@@ -61,6 +61,7 @@ const MessageView = ({ type, id, messages }: MessageViewProps) => {
                   : "flex-row"
               }`}
             >
+            <div className={`flex items-center bg-muted px-3 gap-2 py-2 rounded-full  ${message.member?.user?.id === userId ? "flex-row-reverse" : "flex-row"}`}>
               <div
                 className={`flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-xs font-semibold`}
               >
@@ -75,17 +76,21 @@ const MessageView = ({ type, id, messages }: MessageViewProps) => {
                 </Avatar>
               </div>
               <div
-                className={`flex px-4 flex-col h-full justify-between ${
+                className={`flex pr-2 flex-col h-full justify-between ${
                   message.member?.user?.id === userId
                     ? "items-end"
                     : "items-start"
                 }`}
               >
-                <div className="text-xs text-gray-500">
-                  {message.member?.user?.username}
+                <div className={`flex justify-between w-full items-center gap-4 ${message.member?.user?.id === userId ? "flex-row-reverse" : "flex-row"}`}>
+                  <span className="text-sm font-semibold">
+                    {message.member?.user?.username}
+                  </span>
+                  <Sentiment content={message.content} groupId={id} userId={message.member?.user?.id} messageId={message.id} />
                 </div>
                 <div className={`flex items-end rounded-lg text-sm`}>
                   {message.content}
+                </div>
                 </div>
               </div>
               <div className="text-xs text-gray-500 h-full flex items-end">

@@ -22,26 +22,23 @@ const ProfilePage = async () => {
           <nav
             className="grid gap-4 text-md text-muted-foreground" x-chunk="dashboard-04-chunk-0"
           >
-            <Link href="#" className="font-semibold text-primary">
+            <Link href="" className="font-semibold text-primary">
               General
             </Link>
-            <Link href="#">Security</Link>
-            <Link href="#">Integrations</Link>
-            <Link href="#">Support</Link>
-            <Link href="#">Organizations</Link>
-            <Link href="#">Advanced</Link>
           </nav>
           <div className="grid gap-6">
             <Card x-chunk="dashboard-04-chunk-1">
               <CardHeader>
-                <CardTitle>Store Name</CardTitle>
+                <CardTitle>
+                  Profile Name
+                </CardTitle>
                 <CardDescription>
-                  Used to identify your store in the marketplace.
+                  Your profile name is the name that is displayed to other users. Note: It&apos;s not your username.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form>
-                  <Input placeholder="Store Name" />
+                  <Input placeholder="Profile Name" defaultValue={user.name || ""} />
                 </form>
               </CardContent>
               <CardFooter className="border-t px-6 py-4">
@@ -50,27 +47,20 @@ const ProfilePage = async () => {
             </Card>
             <Card x-chunk="dashboard-04-chunk-2">
               <CardHeader>
-                <CardTitle>Plugins Directory</CardTitle>
+                <CardTitle>
+                  Email Address
+                </CardTitle>
                 <CardDescription>
-                  The directory within your project, in which your plugins are
-                  located.
+                  Your email address is used for notifications and password recovery.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form className="flex flex-col gap-4">
                   <Input
-                    placeholder="Project Name"
-                    defaultValue="/content/plugins"
+                    placeholder="Email Address"
+                    type="email"
+                    defaultValue={user.email || ""}
                   />
-                  <div className="flex items-center space-x-2">
-                    {/* <Checkbox id="include" defaultChecked /> */}
-                    <label
-                      htmlFor="include"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Allow administrators to change the directory.
-                    </label>
-                  </div>
                 </form>
               </CardContent>
               <CardFooter className="border-t px-6 py-4">
@@ -84,21 +74,3 @@ const ProfilePage = async () => {
 };
 
 export default ProfilePage;
-
-{
-  /**
-    <div>
-        {JSON.stringify(session)}
-        <form action={async () => {
-            "use server";
-            await signOut({
-                redirectTo: "/auth/login"
-            });
-        }}>
-            <Button type="submit">
-                Sign out
-            </Button>
-        </form>
-    </div>     
-*/
-}

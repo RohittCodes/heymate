@@ -7,7 +7,7 @@ import MindsDB from "mindsdb-js-sdk";
 import connect from "@/lib/create-mind";
 import { getUserByUsername } from "@/data/user";
 
-export async function POST (req: Request, res: Response) {
+export async function POST (req: Request) {
     try {
         const session = await auth();
         const currentUser = session?.user as any;

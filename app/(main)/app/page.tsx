@@ -42,12 +42,16 @@ const AppPage = async () => {
                 Welcome to HeyMate!
             </div>
             <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-6">
-                    Bots you can use:
+                <div className="flex flex-col gap-[10px]">
+                    <span className="ml-2 text-xl font-semibold mb-4">
+                        Bots you can use:
+                    </span>
                     <DirectBots bots={bots} friends={friends} />
                 </div>
-                <div className="flex flex-col gap-6">
-                    Bots to add to your groups:
+                <div className="flex flex-col gap-[10px]">
+                    <span className="ml-2 text-xl font-semibold mb-4">
+                        Bots to add to your groups:
+                    </span>
                     <GroupBots bots={bots} groups={groups} />
                 </div>
             </div>

@@ -1,5 +1,5 @@
 [![MindsDB](https://img.shields.io/badge/MINDSDB-00A550?labelColor=16202D&style=for-the-badge&link=https://mindsdb.com/)](https://mindsdb.com/)
-[![Quira.sh](https://img.shields.io/badge/Quine.sh-131633?style=for-the-badge&link=https://quira.sh/)](https://quira.sh/)
+[![Quira.sh](https://img.shields.io/badge/Quira.sh-131633?style=for-the-badge&link=https://quira.sh/)](https://quira.sh/)
 
 # HeyMate
 

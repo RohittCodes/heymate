@@ -23,7 +23,7 @@ HeyMate is an AI-powered messaging application that allows users to chat with th
 
 ## Demo 🚀
 
-[![HeyMate](https://img.shields.io/badge/HeyMate-131633?style=for-the-badge&link=https://heymate.vercel.app/)](https://heymate.vercel.app/)
+[![HeyMate](https://img.shields.io/badge/HeyMate-131633?style=for-the-badge&link=https://github.com/RohittCodes/heymate/)](https://github.com/RohittCodes/heymate)
 
 https://github.com/RohittCodes/heymate/assets/104308198/d2779b86-e61f-4a74-a92c-1d94bd9773f8
 

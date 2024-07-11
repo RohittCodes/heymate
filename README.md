@@ -25,7 +25,9 @@ HeyMate is an AI-powered messaging application that allows users to chat with th
 
 [![HeyMate](https://img.shields.io/badge/HeyMate-131633?style=for-the-badge&link=https://heymate.vercel.app/)](https://heymate.vercel.app/)
 
-** Note: The demo is not yet available. **
+https://github.com/RohittCodes/heymate/assets/104308198/d2779b86-e61f-4a74-a92c-1d94bd9773f8
+
+Note: If you're not able to access the demo video, please visit this youtube link: [HeyMate Demo](https://youtu.be/6rHr_L0pV2E)
 
 ## Features 🎉
 
@@ -39,7 +41,7 @@ HeyMate is an AI-powered messaging application that allows users to chat with th
   - **DankMeme**: Ai bot to provide you with the best memes you can find on the internet.
   - **CodeChimp**: Ai bot to help you with your coding problems.
   - **HugoBot**: Most human-like ai bot to chat with.
-  - **AstraBot**: Ai bot to help you with your astronomy questions.
+  - **AstroBot**: Ai bot to help you with your astrology problems.
 - **Sentiment Analysis**: Get the sentiment of the messages you send and receive.
 
 ## Tech Stack 🛠️
@@ -133,6 +135,8 @@ USING
       model_name = 'dankmeme',
       prompt_template = 'act like dankmeme, an ai bot that provides you with the best memes you can find on the internet and provide a response to the following text: {{text}}';
 ```
+
+NOTE: To use the bots you need to manually setup the bots into your mysql database using prisma studio. Will be updating the code to automate this process in the future and users will be able to setup their own bots using the MindsDB API.
 
 ### Running the Application
 
